@@ -11,13 +11,84 @@ class Calculator {
 
     //adicionar digito na tela da calculadora
     addDigit(digit) {
+        //verificar se tem ou não ponto
+        if (digit === "." && this.currentOperationText.innerText.icludes(".")) {
+            return;
+        }
+
         this.currentOperation = digit;
         this.updateScreen();
     }
 
+    //Todas operações da calculadora
+    processOperation(operation) {
+        //verificar se current está vazio
+        if (this.currentOperationText.innerText === "") {
+            //mudar operação
+            if (previousOperationText.innerText !== "") {
+                this.changeOperation(operation);
+            }
+            return;
+        }
+        //pegar valores dos textos inseridos
+        let operationValue;
+        const previous = +this.previousOperationText.innerText.split(" ")[0];
+        const current = +this.currentOperationText.innerText;
+
+        switch (operation) {
+            case "+":
+                operationValue = previous + current;
+                this.updateScreen(operationValue, operation, current, previous);
+                break;
+            case "-":
+                operationValue = previous - current;
+                this.updateScreen(operationValue, operation, current, previous);
+                break;
+            case "/":
+                operationValue = previous / current;
+                this.updateScreen(operationValue, operation, current, previous);
+                break;
+            case "*":
+                operationValue = previous * current;
+                this.updateScreen(operationValue, operation, current, previous);
+                break;
+            default:
+                return;
+        }
+    }
+
     //mudar valores na tela da calculadora
-    updateScreen() {
-        this.currentOperationText.innerText += this.currentOperation;
+    updateScreen(
+        operationValue = null,
+        operation = null,
+        current = null,
+        previous = null
+    ) {
+
+        if (operationValue === null) {
+            this.currentOperationText.innerText += this.currentOperation;
+        } else {
+            //checar se o valor é zero, se for, colocar valor atual
+            if (previous === 0) {
+                operationValue = current;
+            }
+
+            //adicionar valor atual no valor anterior
+            this.previousOperationText.innerText = `${operationValue} ${operation}`;
+            this.currentOperationText.innerText = "";
+        }
+    }
+
+    //mudar operação matemática
+    changeOperation(operation) {
+
+        const mathOperations = ["*", "/", "+", "-"]
+
+        if (!mathOperations.includes(operation)) {
+            return
+        }
+
+        this.previousOperationText.innerText = this.previousOperationText.innerText.slice(0, -1) + operation;
     }
 }
 
@@ -30,7 +101,7 @@ buttons.forEach((btn) => {
         if (+value >= 0 || value === ".") {
             calc.addDigit(value);
         } else {
-            console.log("Op: " + value);
+            calc.processOperation(value);
         }
     });
 });
