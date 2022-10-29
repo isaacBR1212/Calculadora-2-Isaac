@@ -23,7 +23,7 @@ class Calculator {
     //Todas operações da calculadora
     processOperation(operation) {
         //verificar se current está vazio
-        if (this.currentOperationText.innerText === "") {
+        if (this.currentOperationText.innerText === "" && operation !== "c") {
             //mudar operação
             if (previousOperationText.innerText !== "") {
                 this.changeOperation(operation);
@@ -51,6 +51,18 @@ class Calculator {
             case "*":
                 operationValue = previous * current;
                 this.updateScreen(operationValue, operation, current, previous);
+                break;
+            case "DEL":
+                this.processDelOperation();
+                break;
+            case "CE":
+                this.processClearCurrentOperation();
+                break;
+            case "C":
+                this.processClearOperation();
+                break;
+            case "=":
+                this.processEqualsOperation();
                 break;
             default:
                 return;
@@ -82,13 +94,33 @@ class Calculator {
     //mudar operação matemática
     changeOperation(operation) {
 
-        const mathOperations = ["*", "/", "+", "-"]
+            const mathOperations = ["*", "/", "+", "-"]
 
-        if (!mathOperations.includes(operation)) {
-            return
+            if (!mathOperations.includes(operation)) {
+                return
+            }
+
+            this.previousOperationText.innerText = this.previousOperationText.innerText.slice(0, -1) + operation;
         }
+        //deletar ultimo digito
+    processDelOperation() {
+            this.currentOperationText.innerText = this.currentOperationText.innerText.slice(0, -1);
+        }
+        //limpar operação atual
+    processClearCurrentOperation() {
+            this.currentOperationText.innerText = "";
+        }
+        //limpa todos os valores
+    processClearOperation() {
+            this.currentOperationText.innerText = "";
+            this.previousOperationText.innerText = "";
+        }
+        //mostra o resultado total
+    processEqualsOperation() {
+        const operation = this.currentOperationText.innerText.split(" ")[1];
 
-        this.previousOperationText.innerText = this.previousOperationText.innerText.slice(0, -1) + operation;
+        this.processOperation(operation);
+        this.previousOperationText.innerText =
     }
 }
 
